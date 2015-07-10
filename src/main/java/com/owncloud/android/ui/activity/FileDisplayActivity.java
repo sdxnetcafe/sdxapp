@@ -100,7 +100,6 @@ import com.owncloud.android.utils.DisplayUtils;
 import com.owncloud.android.utils.ErrorMessageAdapter;
 import com.owncloud.android.utils.MimeTypeUtil;
 import com.owncloud.android.utils.PermissionUtil;
-import com.owncloud.android.widgets.ShortcutsWidget;
 
 import org.greenrobot.eventbus.EventBus;
 import org.parceler.Parcels;
@@ -170,6 +169,7 @@ public class FileDisplayActivity extends HookActivity
     private SearchView searchView;
     private boolean mUploadFromWidget = false;
     private boolean mNewFromWidget = false;
+    private boolean mRefreshFromWidget = false;
 
     
     @Override
