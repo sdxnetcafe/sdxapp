@@ -912,28 +912,12 @@ public class FileContentProvider extends ContentProvider {
                 }
             }
 
-            if (oldVersion < 18 && newVersion >= 18) {
-                Log_OC.i(SQL, "Entering in the #18 ADD in onUpgrade");
-                db.beginTransaction();
-                try {
-                    // add type column default being IMAGE(0)
-                    db.execSQL(ALTER_TABLE + ProviderTableMeta.SYNCED_FOLDERS_TABLE_NAME +
-                            ADD_COLUMN + ProviderTableMeta.SYNCED_FOLDER_TYPE +
-                            " INTEGER " + " DEFAULT 0");
-
-                    upgraded = true;
-                    db.setTransactionSuccessful();
-                } finally {
-                    db.endTransaction();
-                }
-            }
-
             if (!upgraded) {
                 Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
             }
 
             if (oldVersion < 18 && newVersion >= 18) {
-                Log_OC.i(SQL, "Adding external link column to capabilities");
+                Log_OC.i(SQL, "Entering in the #18 Adding external link column to capabilities");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.CAPABILITIES_TABLE_NAME +
@@ -952,10 +936,30 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 19 && newVersion >= 19) {
-                Log_OC.i(SQL, "Adding external link column to capabilities");
+                Log_OC.i(SQL, "Entering in the #19 Adding external link column to capabilities");
                 db.beginTransaction();
                 try {
                     createExternalLinksTable(db);
+                    upgraded = true;
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+            }
+
+            if (!upgraded) {
+                Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
+            }
+
+            if (oldVersion < 20 && newVersion >= 20) {
+                Log_OC.i(SQL, "Entering in the #20 ADD in onUpgrade");
+                db.beginTransaction();
+                try {
+                    // add type column default being IMAGE(0)
+                    db.execSQL(ALTER_TABLE + ProviderTableMeta.SYNCED_FOLDERS_TABLE_NAME +
+                            ADD_COLUMN + ProviderTableMeta.SYNCED_FOLDER_TYPE +
+                            " INTEGER " + " DEFAULT 0");
+
                     upgraded = true;
                     db.setTransactionSuccessful();
                 } finally {
