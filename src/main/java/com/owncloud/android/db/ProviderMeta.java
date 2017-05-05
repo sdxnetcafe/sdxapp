@@ -45,6 +45,7 @@ public class ProviderMeta {
         public static final String SYNCED_FOLDERS_TABLE_NAME = "synced_folders";
         public static final String EXTERNAL_LINKS_TABLE_NAME = "external_links";
         public static final String ARBITRARY_DATA_TABLE_NAME = "arbitrary_data";
+        public static final String FILESYSTEM_TABLE_NAME = "filesystem";
 
         private static final String CONTENT_PREFIX = "content://";
 
@@ -66,6 +67,9 @@ public class ProviderMeta {
                 + MainApp.getAuthority() + "/external_links");
         public static final Uri CONTENT_URI_ARBITRARY_DATA = Uri.parse(CONTENT_PREFIX
                 + MainApp.getAuthority() + "/arbitrary_data");
+        public static final Uri CONTENT_URI_FILESYSTEM = Uri.parse(CONTENT_PREFIX
+                + MainApp.getAuthority() + "/filesystem");
+
 
         public static final String CONTENT_TYPE = "vnd.android.cursor.dir/vnd.owncloud.file";
         public static final String CONTENT_TYPE_ITEM = "vnd.android.cursor.item/vnd.owncloud.file";
@@ -186,5 +190,12 @@ public class ProviderMeta {
         public static final String ARBITRARY_DATA_CLOUD_ID = "cloud_id";
         public static final String ARBITRARY_DATA_KEY = "key";
         public static final String ARBITRARY_DATA_VALUE = "value";
+
+        // Columns of filesystem data table
+        public static final String FILESYSTEM_FILE_LOCAL_PATH = "local_path";
+        public static final String FILESYSTEM_FILE_MODIFIED = "modified_at";
+        public static final String FILESYSTEM_FILE_IS_FOLDER = "is_folder";
+        public static final String FILESYSTEM_FILE_FOUND_RECENTLY = "found_at";
+        public static final String FILESYSTEM_FILE_SENT_FOR_UPLOAD = "upload_triggered";
     }
 }
