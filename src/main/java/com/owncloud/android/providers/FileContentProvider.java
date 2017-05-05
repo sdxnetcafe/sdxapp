@@ -648,14 +648,14 @@ public class FileContentProvider extends ContentProvider {
             Log_OC.i(SQL, "Entering in onUpgrade");
             boolean upgraded = false;
             if (oldVersion == 1 && newVersion >= 2) {
-                Log_OC.i(SQL, "Entering in the #1 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #2 ADD in onUpgrade");
                 db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
                         ADD_COLUMN + ProviderTableMeta.FILE_KEEP_IN_SYNC + " INTEGER " +
                         " DEFAULT 0");
                 upgraded = true;
             }
             if (oldVersion < 3 && newVersion >= 3) {
-                Log_OC.i(SQL, "Entering in the #2 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #3 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -675,7 +675,7 @@ public class FileContentProvider extends ContentProvider {
                 }
             }
             if (oldVersion < 4 && newVersion >= 4) {
-                Log_OC.i(SQL, "Entering in the #3 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #4 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -699,7 +699,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 5 && newVersion >= 5) {
-                Log_OC.i(SQL, "Entering in the #4 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #5 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -717,7 +717,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 6 && newVersion >= 6) {
-                Log_OC.i(SQL, "Entering in the #5 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #6 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -958,7 +958,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 20 && newVersion >= 20) {
-                Log_OC.i(SQL, "Adding arbitrary data table");
+                Log_OC.i(SQL, "Entering in the #20 Adding arbitrary data table");
                 db.beginTransaction();
                 try {
                     createArbitraryData(db);
@@ -990,8 +990,8 @@ public class FileContentProvider extends ContentProvider {
 
                     SyncedFolderProvider syncedFolderProvider = new SyncedFolderProvider(contentResolver);
 
-                    final List<MediaFolder> imageMediaFolders = MediaProvider.getImageFolders(contentResolver, 0);
-                    final List<MediaFolder> videoMediaFolders = MediaProvider.getVideoFolders(contentResolver, 0);
+                    final List<MediaFolder> imageMediaFolders = MediaProvider.getImageFolders(contentResolver, 1);
+                    final List<MediaFolder> videoMediaFolders = MediaProvider.getVideoFolders(contentResolver, 1);
 
                     ArrayList<Long> idsToDelete = new ArrayList<>();
                     List<SyncedFolder> syncedFolders = syncedFolderProvider.getSyncedFolders();
@@ -1026,6 +1026,8 @@ public class FileContentProvider extends ContentProvider {
 
                     upgraded = true;
                     db.setTransactionSuccessful();
+                } catch (Throwable t) {
+                    Log_OC.e(TAG, "ERROR!", t);
                 } finally {
                     db.endTransaction();
                 }
