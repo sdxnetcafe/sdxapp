@@ -236,7 +236,7 @@ public class PushUtils {
                                         PushConfigurationState pushArbitraryData = new PushConfigurationState(token,
                                                 pushResponse.getDeviceIdentifier(), pushResponse.getSignature(),
                                                 pushResponse.getPublicKey(), false);
-                                        arbitraryDataProvider.storeOrUpdateKeyValue(account, KEY_PUSH,
+                                        arbitraryDataProvider.storeOrUpdateKeyValue(account.name, KEY_PUSH,
                                                 gson.toJson(pushArbitraryData));
                                     }
                                 }
