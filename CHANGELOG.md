@@ -1,3 +1,21 @@
+## 1.5.0 (2017)
+
+- Account-wide search (NC 12+)
+- Auto upload available on Android 4+
+- Separation between Image & Video for Auto upload
+- Ability to define custom folders for Auto upload
+- Simple contacts backup & restore
+- Shared files view
+- Notifications view and Push notifications (on Google Play-powered devices)
+- Favorites, Photos and Activities
+- Fingerprint locking
+- SVG preview
+- New sorting dialog
+- User information view
+- Custom external links support
+- Nicer error views for images & video preview
+- Various bug fixes & improvements
+
 ## 1.4.2 (March 14, 2017)
 - Auto Upload for newly taken photos/images (Android 6+)
 - Auto Upload improvements and fixes
@@ -6,7 +24,7 @@
 - Fix re-upload of files
 - Avoid toggling favourite for all selected files
 - Link to providers list in the setup screen
-- further bugfixes and improvements
+- Further bug fixes and improvements
 
 ## 1.4.1 (January 27, 2017)
 - Share URLs to Nextcloud
@@ -16,7 +34,7 @@
 - Navigation drawer: Fix lag on older devices
 - Android 7: Pending jobs in upload view
 - Android 7: Auto upload: ignore ".tmp" files and folders
-- Bugfixes and design improvements
+- Bug fixes and design improvements
 
 ## 1.4.0 (December 8, 2016)
 
@@ -86,4 +104,4 @@
 
 ## 1.0.0 (June 12, 2016)
 
-- Initial release of the Nextcloud Android app 
+- Initial release of the Nextcloud Android app
