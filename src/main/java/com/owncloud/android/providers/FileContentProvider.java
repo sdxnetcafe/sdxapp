@@ -73,6 +73,7 @@ public class FileContentProvider extends ContentProvider {
     private static final int SYNCED_FOLDERS = 7;
     private static final int EXTERNAL_LINKS = 8;
     private static final int ARBITRARY_DATA = 9;
+    private static final int FILESYSTEM = 10;
 
     private static final String TAG = FileContentProvider.class.getSimpleName();
 
@@ -204,6 +205,9 @@ public class FileContentProvider extends ContentProvider {
                 break;
             case ARBITRARY_DATA:
                 count = db.delete(ProviderTableMeta.ARBITRARY_DATA_TABLE_NAME, where, whereArgs);
+                break;
+            case FILESYSTEM:
+                count = db.delete(ProviderTableMeta.FILESYSTEM_TABLE_NAME, where, whereArgs);
                 break;
             default:
                 //Log_OC.e(TAG, "Unknown uri " + uri);
@@ -351,6 +355,18 @@ public class FileContentProvider extends ContentProvider {
                 }
                 return insertedArbitraryDataUri;
 
+            case FILESYSTEM:
+                Uri insertedFilesystemUri = null;
+                long filesystedId = db.insert(ProviderTableMeta.FILESYSTEM_TABLE_NAME, null, values);
+                if (filesystedId > 0) {
+                    insertedFilesystemUri =
+                            ContentUris.withAppendedId(ProviderTableMeta.CONTENT_URI_FILESYSTEM, filesystedId);
+                } else {
+                    throw new SQLException("ERROR " + uri);
+
+                }
+                return insertedFilesystemUri;
+
             default:
                 throw new IllegalArgumentException("Unknown uri id: " + uri);
         }
@@ -402,6 +418,7 @@ public class FileContentProvider extends ContentProvider {
         mUriMatcher.addURI(authority, "synced_folders", SYNCED_FOLDERS);
         mUriMatcher.addURI(authority, "external_links", EXTERNAL_LINKS);
         mUriMatcher.addURI(authority, "arbitrary_data", ARBITRARY_DATA);
+        mUriMatcher.addURI(authority, "filesystem", FILESYSTEM);
 
         return true;
     }
@@ -497,6 +514,13 @@ public class FileContentProvider extends ContentProvider {
                             + uri.getPathSegments().get(1));
                 }
                 break;
+            case FILESYSTEM:
+                sqlQuery.setTables(ProviderTableMeta.FILESYSTEM_TABLE_NAME);
+                if (uri.getPathSegments().size() > 1) {
+                    sqlQuery.appendWhere(ProviderTableMeta._ID + "="
+                            + uri.getPathSegments().get(1));
+                }
+                break;
             default:
                 throw new IllegalArgumentException("Unknown uri id: " + uri);
         }
@@ -524,6 +548,9 @@ public class FileContentProvider extends ContentProvider {
                     break;
                 default: // Files
                     order = ProviderTableMeta.FILE_DEFAULT_SORT_ORDER;
+                    break;
+                case FILESYSTEM:
+                    order = ProviderTableMeta.FILESYSTEM_FILE_LOCAL_PATH;
                     break;
             }
         } else {
@@ -635,6 +662,9 @@ public class FileContentProvider extends ContentProvider {
 
             // Create arbitrary data table
             createArbitraryData(db);
+
+            // Create filesystem table
+            createFileSystemTable(db);
         }
 
         @Override
@@ -642,14 +672,14 @@ public class FileContentProvider extends ContentProvider {
             Log_OC.i(SQL, "Entering in onUpgrade");
             boolean upgraded = false;
             if (oldVersion == 1 && newVersion >= 2) {
-                Log_OC.i(SQL, "Entering in the #1 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #2 ADD in onUpgrade");
                 db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
                         ADD_COLUMN + ProviderTableMeta.FILE_KEEP_IN_SYNC + " INTEGER " +
                         " DEFAULT 0");
                 upgraded = true;
             }
             if (oldVersion < 3 && newVersion >= 3) {
-                Log_OC.i(SQL, "Entering in the #2 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #3 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -669,7 +699,7 @@ public class FileContentProvider extends ContentProvider {
                 }
             }
             if (oldVersion < 4 && newVersion >= 4) {
-                Log_OC.i(SQL, "Entering in the #3 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #4 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -693,7 +723,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 5 && newVersion >= 5) {
-                Log_OC.i(SQL, "Entering in the #4 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #5 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -711,7 +741,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 6 && newVersion >= 6) {
-                Log_OC.i(SQL, "Entering in the #5 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #6 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -816,6 +846,7 @@ public class FileContentProvider extends ContentProvider {
                     db.endTransaction();
                 }
             }
+
             if (!upgraded) {
                 Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
             }
@@ -898,7 +929,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 17 && newVersion >= 17) {
-                Log_OC.i(SQL, "Entering in the #4 ADD in onUpgrade");
+                Log_OC.i(SQL, "Entering in the #17 ADD in onUpgrade");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.FILE_TABLE_NAME +
@@ -910,7 +941,6 @@ public class FileContentProvider extends ContentProvider {
                 } finally {
                     db.endTransaction();
                 }
-
             }
 
             if (!upgraded) {
@@ -918,7 +948,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 18 && newVersion >= 18) {
-                Log_OC.i(SQL, "Adding external link column to capabilities");
+                Log_OC.i(SQL, "Entering in the #18 Adding external link column to capabilities");
                 db.beginTransaction();
                 try {
                     db.execSQL(ALTER_TABLE + ProviderTableMeta.CAPABILITIES_TABLE_NAME +
@@ -937,7 +967,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 19 && newVersion >= 19) {
-                Log_OC.i(SQL, "Adding external link column to capabilities");
+                Log_OC.i(SQL, "Entering in the #19 Adding external link column to capabilities");
                 db.beginTransaction();
                 try {
                     createExternalLinksTable(db);
@@ -953,7 +983,7 @@ public class FileContentProvider extends ContentProvider {
             }
 
             if (oldVersion < 20 && newVersion >= 20) {
-                Log_OC.i(SQL, "Adding arbitrary data table");
+                Log_OC.i(SQL, "Entering in the #20 Adding arbitrary data table");
                 db.beginTransaction();
                 try {
                     createArbitraryData(db);
@@ -966,6 +996,35 @@ public class FileContentProvider extends ContentProvider {
 
             if (!upgraded) {
                 Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
+            }
+
+            if (oldVersion < 21 && newVersion >= 21) {
+                Log_OC.i(SQL, "Entering in the #21 ADD in onUpgrade");
+                db.beginTransaction();
+                try {
+                    // add type column default being CUSTOM (0)
+                    Log_OC.i(SQL, "Add type column and default value 0 (CUSTOM) to synced_folders table");
+                    db.execSQL(ALTER_TABLE + ProviderTableMeta.SYNCED_FOLDERS_TABLE_NAME +
+                            ADD_COLUMN + ProviderTableMeta.SYNCED_FOLDER_TYPE +
+                            " INTEGER " + " DEFAULT 0");
+
+
+                    // create Filesystem table
+                    Log_OC.i(SQL, "Create filesystem table");
+                    createFileSystemTable(db);
+
+                    upgraded = true;
+                    db.setTransactionSuccessful();
+
+                } catch (Throwable t) {
+                    Log_OC.e(TAG, "ERROR!", t);
+                } finally {
+                    db.endTransaction();
+                }
+
+                if (!upgraded) {
+                    Log_OC.i(SQL, String.format(Locale.ENGLISH, UPGRADE_VERSION_MSG, oldVersion, newVersion));
+                }
             }
         }
     }
@@ -1089,7 +1148,8 @@ public class FileContentProvider extends ContentProvider {
                 + ProviderTableMeta.SYNCED_FOLDER_ENABLED + " INTEGER, "            // enabled
                 + ProviderTableMeta.SYNCED_FOLDER_SUBFOLDER_BY_DATE + " INTEGER, "  // subfolder by date
                 + ProviderTableMeta.SYNCED_FOLDER_ACCOUNT + "  TEXT, "              // account
-                + ProviderTableMeta.SYNCED_FOLDER_UPLOAD_ACTION + " INTEGER );"     // upload action
+                + ProviderTableMeta.SYNCED_FOLDER_UPLOAD_ACTION + " INTEGER, "     // upload action
+                + ProviderTableMeta.SYNCED_FOLDER_TYPE + " INTEGER );"               // type
         );
     }
 
@@ -1100,7 +1160,7 @@ public class FileContentProvider extends ContentProvider {
                 + ProviderTableMeta.EXTERNAL_LINKS_LANGUAGE + " TEXT, "     // language
                 + ProviderTableMeta.EXTERNAL_LINKS_TYPE + " INTEGER, "      // type
                 + ProviderTableMeta.EXTERNAL_LINKS_NAME + " TEXT, "         // name
-                + ProviderTableMeta.EXTERNAL_LINKS_URL + " TEXT )"          // url
+                + ProviderTableMeta.EXTERNAL_LINKS_URL + " TEXT );"          // url
         );
     }
 
@@ -1109,9 +1169,23 @@ public class FileContentProvider extends ContentProvider {
                 + ProviderTableMeta._ID + " INTEGER PRIMARY KEY, "      // id
                 + ProviderTableMeta.ARBITRARY_DATA_CLOUD_ID + " TEXT, " // cloud id (account name + FQDN)
                 + ProviderTableMeta.ARBITRARY_DATA_KEY + " TEXT, "      // key
-                + ProviderTableMeta.ARBITRARY_DATA_VALUE + " TEXT) "    // value
+                + ProviderTableMeta.ARBITRARY_DATA_VALUE + " TEXT );"    // value
         );
     }
+
+    private void createFileSystemTable(SQLiteDatabase db) {
+        db.execSQL("CREATE TABLE " + ProviderTableMeta.FILESYSTEM_TABLE_NAME + "("
+                + ProviderTableMeta._ID + " INTEGER PRIMARY KEY, "      // id
+                + ProviderTableMeta.FILESYSTEM_FILE_LOCAL_PATH + " TEXT, "
+                + ProviderTableMeta.FILESYSTEM_FILE_IS_FOLDER + " INTEGER, "
+                + ProviderTableMeta.FILESYSTEM_FILE_FOUND_RECENTLY + " LONG, "
+                + ProviderTableMeta.FILESYSTEM_FILE_SENT_FOR_UPLOAD + " INTEGER, "
+                + ProviderTableMeta.FILESYSTEM_FILE_BEING_MODIFIED + " INTEGER, "
+                + ProviderTableMeta.FILESYSTEM_FILE_MODIFIED + " LONG );"
+
+        );
+    }
+
 
     /**
      * Version 10 of database does not modify its scheme. It coincides with the upgrade of the ownCloud account names

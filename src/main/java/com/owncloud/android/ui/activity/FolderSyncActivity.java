@@ -45,6 +45,7 @@ import com.owncloud.android.datamodel.OCFile;
 import com.owncloud.android.datamodel.SyncedFolder;
 import com.owncloud.android.datamodel.SyncedFolderDisplayItem;
 import com.owncloud.android.datamodel.SyncedFolderProvider;
+import com.owncloud.android.lib.common.utils.Log_OC;
 import com.owncloud.android.files.services.FileUploader;
 import com.owncloud.android.ui.adapter.FolderSyncAdapter;
 import com.owncloud.android.ui.decoration.MediaGridItemDecoration;
@@ -151,10 +152,16 @@ public class FolderSyncActivity extends FileActivity implements FolderSyncAdapte
         new Thread(new Runnable() {
             @Override
             public void run() {
-                final List<MediaFolder> mediaFolders = MediaProvider.getMediaFolders(getContentResolver(),
+                final List<MediaFolder> mediaFolders = MediaProvider.getImageFolders(getContentResolver(),
                         perFolderMediaItemLimit);
+                Log_OC.w(TAG, "Picture Folders: " + mediaFolders.size());
+                mediaFolders.addAll(MediaProvider.getVideoFolders(getContentResolver(), perFolderMediaItemLimit));
+                Log_OC.w(TAG, "Picture+Video Folders: " + mediaFolders.size());
+
+                //TODO properly merge image and video lists to remove duplicates
+
                 List<SyncedFolder> syncedFolderArrayList = mSyncedFolderProvider.getSyncedFolders();
-                List<SyncedFolder> currentAccountSyncedFoldersList = new ArrayList<SyncedFolder>();
+                List<SyncedFolder> currentAccountSyncedFoldersList = new ArrayList<>();
                 Account currentAccount = AccountUtils.getCurrentOwnCloudAccount(FolderSyncActivity.this);
                 for (SyncedFolder syncedFolder : syncedFolderArrayList) {
                     if (syncedFolder.getAccount().equals(currentAccount.name)) {
@@ -168,6 +175,10 @@ public class FolderSyncActivity extends FileActivity implements FolderSyncAdapte
                 mHandler.post(new TimerTask() {
                     @Override
                     public void run() {
+                        // strange hack to make everything work as expected
+                        if (syncFolderItems.size() > 0) {
+                            syncFolderItems.add(0, syncFolderItems.get(0));
+                        }
                         mAdapter.setSyncFolderItems(syncFolderItems);
                         setListShown(true);
                     }
@@ -261,7 +272,8 @@ public class FolderSyncActivity extends FileActivity implements FolderSyncAdapte
                 syncedFolder.getAccount(),
                 syncedFolder.getUploadAction(),
                 syncedFolder.isEnabled(),
-                new File(syncedFolder.getLocalPath()).getName());
+                new File(syncedFolder.getLocalPath()).getName(),
+                syncedFolder.getType());
     }
 
     /**
@@ -285,7 +297,8 @@ public class FolderSyncActivity extends FileActivity implements FolderSyncAdapte
                 syncedFolder.isEnabled(),
                 mediaFolder.filePaths,
                 mediaFolder.folderName,
-                mediaFolder.numberOfFiles);
+                mediaFolder.numberOfFiles,
+                mediaFolder.type);
     }
 
     /**
@@ -308,7 +321,8 @@ public class FolderSyncActivity extends FileActivity implements FolderSyncAdapte
                 false,
                 mediaFolder.filePaths,
                 mediaFolder.folderName,
-                mediaFolder.numberOfFiles);
+                mediaFolder.numberOfFiles,
+                mediaFolder.type);
     }
 
     /**

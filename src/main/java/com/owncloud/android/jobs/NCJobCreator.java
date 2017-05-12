@@ -4,37 +4,43 @@
  * @author Mario Danic
  * Copyright (C) 2017 Mario Danic
  * Copyright (C) 2017 Nextcloud GmbH
- *
+ * <p>
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * at your option) any later version.
- *
+ * <p>
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- *
+ * <p>
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.owncloud.android.services;
+package com.owncloud.android.jobs;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-
-import com.owncloud.android.MainApp;
+import com.evernote.android.job.Job;
+import com.evernote.android.job.JobCreator;
 
 /**
- * Handles shutdown procedure - basically just waits a little bit for all jobs to finish
+ * Job creator for android-job
  */
 
-public class ShutdownReceiver extends BroadcastReceiver {
+public class NCJobCreator implements JobCreator {
     @Override
-    public void onReceive(final Context context, final Intent intent) {
-        if (MainApp.getSyncedFolderObserverService() != null) {
-            MainApp.getSyncedFolderObserverService().onDestroy();
+    public Job create(String tag) {
+        switch (tag) {
+            case AutoUploadJob.TAG:
+                return new AutoUploadJob();
+            case ContactsBackupJob.TAG:
+                return new ContactsBackupJob();
+            case ContactsImportJob.TAG:
+                return new ContactsImportJob();
+            case NewAutoUploadJob.TAG:
+                return new NewAutoUploadJob();
+            default:
+                return null;
         }
     }
 }

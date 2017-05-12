@@ -129,7 +129,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
-        <service android:name=".services.observer.SyncedFolderObserverService"/>
+
         <service
             android:name=".syncadapter.FileSyncService"
             android:exported="true" >
@@ -158,7 +158,7 @@
             android:label="@string/search_users_and_groups_hint" />
 
         <provider
-            android:name="org.nextcloud.providers.DocumentsStorageProvider"
+            android:name=".providers.DocumentsStorageProvider"
             android:authorities="@string/document_provider_authority"
             android:exported="true"
             android:grantUriPermissions="true"
@@ -223,41 +223,10 @@
         <activity android:name=".ui.activity.UploadListActivity" />
         <activity android:name=".ui.activity.WhatsNewActivity"
                   android:theme="@style/Theme.ownCloud.noActionBar.Login" />
-        
-        <receiver android:name=".files.services.ConnectivityActionReceiver"
-		    android:enabled="true" android:label="ConnectivityActionReceiver">
-		    <intent-filter>
-		        <!--action android:name="android.net.conn.CONNECTIVITY_CHANGE"/-->
-		        <action android:name="android.net.wifi.STATE_CHANGE"/>
-                <action android:name="android.intent.action.ACTION_POWER_CONNECTED"/>
-                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED"/>
-		    </intent-filter>
-		</receiver>
-		<receiver android:name=".files.InstantUploadBroadcastReceiver">
-            <intent-filter>
 
-                <!-- unofficially supported by many Android phones but not by HTC devices: -->
-                <action android:name="com.android.camera.NEW_PICTURE" />
-                <!-- officially supported since Android 4.0 (SDK 14, works even for HTC devices): -->
-                <action android:name="android.hardware.action.NEW_PICTURE" />
-
-                <data android:mimeType="image/*" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="android.hardware.action.NEW_VIDEO" />
-
-                <data android:mimeType="video/*" />
-            </intent-filter>
-        </receiver>
         <receiver android:name=".files.BootupBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".services.ShutdownReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-                <action android:name="android.intent.action.QUICKBOOT_POWEROFF" />
             </intent-filter>
         </receiver>
 

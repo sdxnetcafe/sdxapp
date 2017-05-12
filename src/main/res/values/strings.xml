@@ -660,5 +660,8 @@
     <string name="new_notification_received">New notification received</string>
     <string name="drawer_logout">Logout</string>
 
+    <!-- Auto upload -->
+    <string name="autoupload_custom_folder">Setup a custom folder</string>
+
 
 </resources>

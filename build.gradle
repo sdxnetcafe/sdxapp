@@ -13,7 +13,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.1'
+        classpath 'com.android.tools.build:gradle:2.4.0-alpha7'
         classpath 'com.google.gms:google-services:3.0.0'
     }
 }
@@ -110,11 +110,6 @@ android {
         preDexLibraries = preDexEnabled && !travisBuild
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
     lintOptions {
         abortOnError false
     }
@@ -175,6 +170,10 @@ android {
     }
     check.dependsOn 'checkstyle', 'findbugs', 'pmd', 'lint'
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -191,11 +190,12 @@ dependencies {
     compile 'com.getbase:floatingactionbutton:1.10.1'
     compile 'com.google.code.findbugs:annotations:2.0.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.4'
-    compile 'com.github.evernote:android-job:v1.1.9'
+    compile 'com.github.evernote:android-job:v1.1.10'
     compile 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
     compile 'org.greenrobot:eventbus:3.0.0'
     compile 'com.googlecode.ez-vcard:ez-vcard:0.10.2'
+    compile 'org.lukhnos:nnio:0.2'
 
     // uncomment for gplay, modified
     //compile 'com.google.android.gms:play-services:10.2.4'

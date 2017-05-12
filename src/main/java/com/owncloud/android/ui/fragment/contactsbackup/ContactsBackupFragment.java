@@ -45,7 +45,7 @@ import com.evernote.android.job.util.support.PersistableBundleCompat;
 import com.owncloud.android.R;
 import com.owncloud.android.datamodel.ArbitraryDataProvider;
 import com.owncloud.android.datamodel.OCFile;
-import com.owncloud.android.services.ContactsBackupJob;
+import com.owncloud.android.jobs.ContactsBackupJob;
 import com.owncloud.android.ui.activity.ContactsPreferenceActivity;
 import com.owncloud.android.ui.fragment.FileFragment;
 import com.owncloud.android.utils.DisplayUtils;
@@ -279,7 +279,7 @@ public class ContactsBackupFragment extends FileFragment implements DatePickerDi
                     contactsPreferenceActivity.getAccount());
         }
 
-        arbitraryDataProvider.storeOrUpdateKeyValue(account, PREFERENCE_CONTACTS_AUTOMATIC_BACKUP,
+        arbitraryDataProvider.storeOrUpdateKeyValue(account.name, PREFERENCE_CONTACTS_AUTOMATIC_BACKUP,
                 String.valueOf(bool));
     }
 
